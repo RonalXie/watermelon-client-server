@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="watermelon-users" />
+        <module name="watermelon-videos" />
+        <module name="watermelon-search" />
+        <module name="watermelon-categories" />
+        <module name="watermelon-gateway" />
+        <module name="watermelon-commons" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="watermelon-categories" options="-parameters" />
+      <module name="watermelon-client-server" options="-parameters" />
+      <module name="watermelon-commons" options="-parameters" />
+      <module name="watermelon-gateway" options="-parameters" />
+      <module name="watermelon-search" options="-parameters" />
+      <module name="watermelon-users" options="-parameters" />
+      <module name="watermelon-videos" options="-parameters" />
+    </option>
+  </component>
+</project>

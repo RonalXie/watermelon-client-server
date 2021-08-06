@@ -1,0 +1,44 @@
+server:
+  port: 8070
+
+spring:
+  application:
+    name: USER-GATEWAY
+  cloud:
+    nacos:
+      server-addr: 106.15.43.178:8848
+    gateway:
+      routes: #配置路由规则
+
+          #用户网关
+        - id: user-router
+          uri: lb://USER-USERS  #转发到注册中心USERS服务
+          predicates:
+            - Path=/user/**
+          filters:
+            - StripPrefix=1 #通过过滤器去掉一级前缀
+
+          #分类网关
+        - id: category-router
+          uri: lb://USER-CATEGORY  #转发到注册中心CATEGORY服务
+          predicates:
+            - Path=/category/**
+          filters:
+            - StripPrefix=1 #通过过滤器去掉一级前缀
+
+
+          #搜索网关
+        - id: search-router
+          uri: lb://USER-SEARCH  #转发到注册中心SEARCH服务
+          predicates:
+            - Path=/search/**
+          filters:
+            - StripPrefix=1 #通过过滤器去掉一级前缀
+
+          #视频网关
+        - id: videos-router
+          uri: lb://USER-VIDEOS  #转发到注册中心VIDEOS服务
+          predicates:
+            - Path=/videos/**
+          filters:
+            - StripPrefix=1 #通过过滤器去掉一级前缀
