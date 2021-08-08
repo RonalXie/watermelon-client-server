@@ -9,7 +9,7 @@
         <module name="watermelon-users" />
         <module name="watermelon-videos" />
         <module name="watermelon-search" />
-        <module name="watermelon-categories" />
+        <module name="watermelon-category" />
         <module name="watermelon-gateway" />
         <module name="watermelon-commons" />
       </profile>
@@ -17,7 +17,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="watermelon-categories" options="-parameters" />
+      <module name="watermelon-category" options="-parameters" />
       <module name="watermelon-client-server" options="-parameters" />
       <module name="watermelon-commons" options="-parameters" />
       <module name="watermelon-gateway" options="-parameters" />

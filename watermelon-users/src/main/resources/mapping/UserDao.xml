@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xsy.dao.UserDao">
+
+    <resultMap type="com.xsy.entity.user.User" id="UserMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="intro" column="intro" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="phoneLinked" column="phone_linked" jdbcType="INTEGER"/>
+        <result property="openid" column="openid" jdbcType="VARCHAR"/>
+        <result property="wechatLinked" column="wechat_linked" jdbcType="INTEGER"/>
+        <result property="followingCount" column="following_count" jdbcType="INTEGER"/>
+        <result property="followersCount" column="followers_count" jdbcType="TIMESTAMP"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+<!--
+
+    private Integer id;
+    private String content;
+    private Integer parentId;
+    private Date createdAt;
+    private UserUp userUp;
+    private List<CommentVO> comments;-->
+
+    <resultMap id="commentMap" type="com.xsy.entity.video.CommentVO">
+        <id property="id" column="id" javaType="INTEGER"/>
+        <result property="content" column="content" javaType="VARCHAR"/>
+        <result property="parentId" column="parent_id" javaType="INTEGER"/>
+        <result property="createdAt" column="careted_at" javaType="TIMESTAMP"/>
+        <association property="userUp" javaType="com.xsy.entity.user.UserUp">
+            <result property="id" column="uid"/>
+            <result property="name" column="name"/>
+            <result property="avatar" column="avatar"/>
+        </association>
+        <collection property="comments" javaType="List" ofType="com.xsy.entity.video.CommentVO">
+
+        </collection>
+
+    </resultMap>
+
+
+    <!--获取评论-->
+
+
+
+
+
+    <!--    获取收藏列表总数-->
+    <select id="queryFavoriteCount" parameterType="int" resultType="int">
+
+        select count (*)
+        from favorite f left join user u on f.uid=u.id
+                        left join video v on f.video_id=v.id
+                        left join category c on v.category_id=c.id
+        where f.uid=#{id}
+
+    </select>
+
+<!--    获取收藏列表-->
+    <select id="queryPageFavorite" parameterType="int" resultType="com.xsy.entity.video.VideoVO">
+
+        select v.id,
+               u.name uploader,
+               v.title,
+               v.cover,
+               c.name category,
+               f.created_at createdAt
+        from favorite f left join user u on f.uid=u.id
+                      left join video v on f.video_id=v.id
+                      left join category c on v.category_id=c.id
+        where f.uid=#{id} limit #{start},#{pageSize}
+
+    </select>
+
+    <!--分页获取播放历史-->
+    <select id="queryPagePlayed" parameterType="int" resultType="com.xsy.entity.video.VideoVO">
+        select v.id,
+               u.name uploader,
+               v.title,
+               v.cover,
+               c.name category,
+               p.created_at createdAt
+        from played p left join user u on p.uid=u.id
+        left join video v on p.video_id=v.id
+        left join category c on v.category_id=c.id
+        where p.uid=#{id} limit #{start},#{pageSize}
+    </select>
+
+    <select id="queryPlayedCount" parameterType="int" resultType="intSS">
+        select count (*)
+        from played p left join user u on p.uid=u.id
+                      left join video v on p.video_id=v.id
+                      left join category c on v.category_id=c.id
+        where p.uid=#{id}
+    </select>
+
+
+
+
+    <!--添加收藏-->
+    <insert id="insertFavorite" parameterType="com.xsy.entity.user.Favorite">
+
+        insert into favorite(uid,video_id,created_at) values (#{uid},#{videoId},#{createdAt})
+
+    </insert>
+
+    <delete id="deleteFavorite" parameterType="int">
+        delete from favorite where uid=#{id} and video_id=#{video_id}
+    </delete>
+
+    <select id="queryFavorite" parameterType="int" resultType="com.xsy.entity.user.Favorite">
+        select uid,video_id videoId,created_at createdAt from favorite where uid=#{uid} and video_id=#{video_id}
+    </select>
+
+
+    <!--根据手机号查询信息-->
+    <select id="queryByPhone" resultMap="UserMap">
+        select  * from user where phone=#{phone}
+    </select>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserMap">
+        select id,
+               name,
+               avatar,
+               intro,
+               phone,
+               phone_linked,
+               openid,
+               wechat_linked,
+               following_count,
+               followers_count,
+               created_at,
+               updated_at
+        from watermelon.user
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UserMap">
+        select id,
+               name,
+               avatar,
+               intro,
+               phone,
+               phone_linked,
+               openid,
+               wechat_linked,
+               following_count,
+               followers_count,
+               created_at,
+               updated_at
+        from watermelon.user limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="UserMap">
+        select
+        id, name, avatar, intro, phone, phone_linked, openid, wechat_linked, following_count, followers_count,
+        created_at, updated_at
+        from watermelon.user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="avatar != null and avatar != ''">
+                and avatar = #{avatar}
+            </if>
+            <if test="intro != null and intro != ''">
+                and intro = #{intro}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="phoneLinked != null">
+                and phone_linked = #{phoneLinked}
+            </if>
+            <if test="openid != null and openid != ''">
+                and openid = #{openid}
+            </if>
+            <if test="wechatLinked != null">
+                and wechat_linked = #{wechatLinked}
+            </if>
+            <if test="followingCount != null">
+                and following_count = #{followingCount}
+            </if>
+            <if test="followersCount != null">
+                and followers_count = #{followersCount}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into watermelon.user(name, avatar, intro, phone, phone_linked, openid, wechat_linked, following_count,
+                                    followers_count, created_at, updated_at)
+        values (#{name}, #{avatar}, #{intro}, #{phone}, #{phoneLinked}, #{openid}, #{wechatLinked}, #{followingCount},
+                #{followersCount}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into watermelon.user(name, avatar, intro, phone, phone_linked, openid, wechat_linked, following_count,
+        followers_count, created_at, updated_at)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.avatar}, #{entity.intro}, #{entity.phone}, #{entity.phoneLinked},
+            #{entity.openid}, #{entity.wechatLinked}, #{entity.followingCount}, #{entity.followersCount},
+            #{entity.createdAt}, #{entity.updatedAt})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into watermelon.user(name, avatar, intro, phone, phone_linked, openid, wechat_linked, following_count,
+        followers_count, created_at, updated_at)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.avatar}, #{entity.intro}, #{entity.phone}, #{entity.phoneLinked},
+            #{entity.openid}, #{entity.wechatLinked}, #{entity.followingCount}, #{entity.followersCount},
+            #{entity.createdAt}, #{entity.updatedAt})
+        </foreach>
+        on duplicate key update
+        name = values(name) , avatar = values(avatar) , intro = values(intro) , phone = values(phone) , phone_linked =
+        values(phone_linked) , openid = values(openid) , wechat_linked = values(wechat_linked) , following_count =
+        values(following_count) , followers_count = values(followers_count) , created_at = values(created_at) ,
+        updated_at = values(updated_at)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update watermelon.user
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="avatar != null and avatar != ''">
+                avatar = #{avatar},
+            </if>
+            <if test="intro != null and intro != ''">
+                intro = #{intro},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="phoneLinked != null">
+                phone_linked = #{phoneLinked},
+            </if>
+            <if test="openid != null and openid != ''">
+                openid = #{openid},
+            </if>
+            <if test="wechatLinked != null">
+                wechat_linked = #{wechatLinked},
+            </if>
+            <if test="followingCount != null">
+                following_count = #{followingCount},
+            </if>
+            <if test="followersCount != null">
+                followers_count = #{followersCount},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from watermelon.user
+        where id = #{id}
+    </delete>
+
+</mapper>
+

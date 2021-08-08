@@ -15,6 +15,12 @@ spring:
     username: root
     password: 123456
 
-#mybatis:
-#  mapper-locations: classpath:mapping/*.xml
-#  type-aliases-package: com.xsy.entity
+  redis:
+    host: 106.15.43.178
+    port: 6379
+
+
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.xsy.entity

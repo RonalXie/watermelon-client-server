@@ -14,7 +14,10 @@ spring:
     url: jdbc:mysql://106.15.43.178:3306/watermelon?characterEncoding=UTF-8&useSSL=false
     username: root
     password: 123456
-#
-#mybatis:
-#  mapper-locations: classpath:mapping/*.xml
-#  type-aliases-package: com.xsy.entity
+  redis:
+    host: 106.15.43.178
+    port: 6379
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.xsy.entity

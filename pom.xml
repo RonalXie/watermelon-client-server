@@ -12,7 +12,7 @@
         <module>watermelon-users</module>
         <module>watermelon-gateway</module>
         <module>watermelon-videos</module>
-        <module>watermelon-categories</module>
+        <module>watermelon-category</module>
         <module>watermelon-commons</module>
         <module>watermelon-search</module>
     </modules>
@@ -86,6 +86,7 @@
                 <artifactId>druid</artifactId>
                 <version>${druid.vcerion}</version>
             </dependency>
+
 
         </dependencies>
     </dependencyManagement>

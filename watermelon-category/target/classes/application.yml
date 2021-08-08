@@ -1,0 +1,20 @@
+server:
+  port: 8073
+
+spring:
+  application:
+    name: USER-CATEGORY
+  cloud:
+    nacos:
+      server-addr: 106.15.43.178:8848
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://106.15.43.178:3306/watermelon?characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 123456
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.xsy.entity
