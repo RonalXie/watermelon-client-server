@@ -16,9 +16,15 @@ spring:
     password: 123456
 
   redis:
-    host: 106.15.43.178
+    host: 222.19.236.131
     port: 6379
 
+  rabbitmq:
+    host: 106.15.43.178
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: ems
   mvc:
     async:
       request-timeout: 20000

@@ -20,7 +20,7 @@ spring:
       max-request-size: 100MB
       max-file-size: 100MB
   redis:
-    host: 106.15.43.178
+    host: 222.19.236.131
     port: 6379
   mvc:
     async:

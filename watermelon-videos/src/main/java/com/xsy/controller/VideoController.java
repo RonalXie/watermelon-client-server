@@ -1,5 +1,6 @@
 package com.xsy.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xsy.entity.CommonResult;
 import com.xsy.entity.RedisPrefix;
 import com.xsy.entity.user.Played;
@@ -57,7 +58,7 @@ public class VideoController {
     }
 
     @PostMapping("/video")
-    public void insertOne(@RequestBody Video video){
+    public void insertOne(@RequestBody Video video) throws JsonProcessingException {
         System.out.println(video.getCategoryId());
 
         videoService.insert(video);

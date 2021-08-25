@@ -7,11 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="watermelon-users" />
-        <module name="watermelon-videos" />
         <module name="watermelon-search" />
         <module name="watermelon-category" />
         <module name="watermelon-gateway" />
         <module name="watermelon-commons" />
+        <module name="watermelon-videos" />
       </profile>
     </annotationProcessing>
   </component>

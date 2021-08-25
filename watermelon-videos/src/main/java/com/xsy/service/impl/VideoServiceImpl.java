@@ -1,5 +1,9 @@
 package com.xsy.service.impl;
 
+
+import com.alibaba.nacos.client.utils.JSONUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xsy.dao.VideoDao;
 import com.xsy.entity.user.Played;
 import com.xsy.entity.RedisPrefix;
@@ -12,6 +16,7 @@ import com.xsy.entity.video.VideoVO;
 import com.xsy.service.VideoService;
 import com.xsy.utils.CategoryClient;
 import com.xsy.utils.UserClient;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -40,6 +45,9 @@ public class VideoServiceImpl implements VideoService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     /**
      * 通过ID查询单条数据
@@ -70,8 +78,21 @@ public class VideoServiceImpl implements VideoService {
      * @return 实例对象
      */
     @Override
-    public Video insert(Video video) {
+    public Video insert(Video video) throws JsonProcessingException {
         this.videoDao.insert(video);
+
+        //保存到es中，MQ异步处理
+        VideoVO videoVO=new VideoVO();
+        BeanUtils.copyProperties(video,videoVO);
+        User user=userClient.selectOne(video.getUid());
+
+        videoVO.setCategory(categoryClient.selectOne(video.getCategoryId()).getName());
+        videoVO.setUploader(user.getName());
+        videoVO.setAvatar(user.getAvatar());
+
+        rabbitTemplate.convertAndSend("myexchange","",new ObjectMapper().writeValueAsString(videoVO));
+
+
         return video;
     }
 

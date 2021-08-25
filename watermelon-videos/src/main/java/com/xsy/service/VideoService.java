@@ -1,5 +1,6 @@
 package com.xsy.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xsy.entity.user.Played;
 import com.xsy.entity.video.Video;
 import com.xsy.entity.video.VideoDetailVO;
@@ -38,7 +39,7 @@ public interface VideoService {
      * @param video 实例对象
      * @return 实例对象
      */
-    Video insert(Video video);
+    Video insert(Video video) throws JsonProcessingException;
 
     /**
      * 修改数据
