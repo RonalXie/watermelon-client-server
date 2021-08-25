@@ -30,7 +30,7 @@ public class Category implements Serializable {
 
     private Date updatedAt;
 
-    private Date deletedAt;
+
 
     private List<Category> children;
 
@@ -82,12 +82,6 @@ public class Category implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public Date getDeletedAt() {
-        return deletedAt;
-    }
 
-    public void setDeletedAt(Date deletedAt) {
-        this.deletedAt = deletedAt;
-    }
 
 }

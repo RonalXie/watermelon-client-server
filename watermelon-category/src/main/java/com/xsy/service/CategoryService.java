@@ -1,6 +1,6 @@
 package com.xsy.service;
 
-import com.xsy.entity.Category;
+import com.xsy.entity.category.Category;
 
 import java.util.List;
 

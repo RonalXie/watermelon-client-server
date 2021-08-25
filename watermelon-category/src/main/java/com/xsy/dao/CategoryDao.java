@@ -1,6 +1,6 @@
 package com.xsy.dao;
 
-import com.xsy.entity.Category;
+import com.xsy.entity.category.Category;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

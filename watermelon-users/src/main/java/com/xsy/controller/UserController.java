@@ -6,17 +6,28 @@ import com.xsy.entity.CommonResult;
 import com.xsy.entity.user.Favorite;
 import com.xsy.entity.RedisPrefix;
 import com.xsy.entity.user.User;
+import com.xsy.entity.video.Comment;
+import com.xsy.entity.video.CommentVO;
+import com.xsy.entity.video.Video;
 import com.xsy.entity.video.VideoVO;
 import com.xsy.entity.vo.BaseUser;
 import com.xsy.service.UserService;
+import com.xsy.utils.OSSUtils;
+import com.xsy.utils.VideoClient;
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +49,11 @@ public class UserController {
     private UserService userService;
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private VideoClient videoClient;
+
+
 
     @GetMapping("/selectOne")
     public User selectOne(Integer id){
@@ -67,7 +83,7 @@ public class UserController {
         }
         String token = httpSession.getId();
         redisTemplate.opsForValue().set(RedisPrefix.TOKEN + token, userDB, 7, TimeUnit.DAYS);
-        Map<String, String> data = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
         data.put("token", token);
         return new CommonResult<Map>(200, "登录成功!", data);
     }
@@ -183,6 +199,51 @@ public class UserController {
         result.put("data",videoVOS);
 
         return new CommonResult<List>(200,"播放历史",videoVOS);
+    }
+
+
+    @GetMapping("/comments/{video_id}")
+    public CommonResult<Map> getComments(@PathVariable("video_id") Integer video_id ,@RequestParam(defaultValue = "1") Integer page,@RequestParam(defaultValue = "20") Integer pageSize){
+        Map<String,Object> result=new HashMap<>();
+
+        List<CommentVO> commentVOS = userService.queryComments(video_id,page,pageSize);
+        result.put("total",userService.queryCommentsCount(video_id));
+        result.put("data",commentVOS);
+
+        return new CommonResult<Map>(200,"评论列表",result);
+
+    }
+
+    @PostMapping("/comments")
+    public void PushComments(@RequestBody Comment comment){
+        Map<String,Object> result=new HashMap<>();
+        System.out.println(comment);
+        userService.insertComments(comment);
+
+
+
+    }
+
+    @PostMapping("/upload")
+    public Map<String,String> upload(MultipartFile file) throws IOException, InterruptedException {
+
+        String filename=new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())+ RandomStringUtils.randomNumeric(5) +file.getOriginalFilename();
+//        String ossname=OSSUtils.upload(file.getInputStream(), "watermelon", filename);
+        Map<String,String> result=userService.uploadVideo(file, filename);
+        return  result;
+
+    }
+
+    @PostMapping("/uploadVideo/{token}")
+    public void uploadVideo(@RequestBody Video video,@PathVariable("token") String token) throws IOException {
+        String date=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        String cover=video.getLink()+"?x-oss-process=video/snapshot,t_30000,f_jpg,w_0,h_0,m_fast,ar_auto";
+        User user= (User) getFromRedis(RedisPrefix.TOKEN+token);
+        video.setUid(user.getId());
+        video.setCreatedAt(date);
+        video.setUpdatedAt(date);
+        videoClient.insertOne(video);
+
     }
 
 

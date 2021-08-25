@@ -1,7 +1,7 @@
 package com.xsy.controller;
 
-import com.xsy.entity.Category;
 import com.xsy.entity.CommonResult;
+import com.xsy.entity.category.Category;
 import com.xsy.service.CategoryService;
 import org.springframework.web.bind.annotation.*;
 

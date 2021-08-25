@@ -4,13 +4,24 @@ import com.xsy.dao.UserDao;
 import com.xsy.entity.user.Favorite;
 import com.xsy.entity.user.Played;
 import com.xsy.entity.user.User;
+import com.xsy.entity.video.Comment;
+import com.xsy.entity.video.CommentVO;
 import com.xsy.entity.video.VideoVO;
 import com.xsy.service.UserService;
+import com.xsy.utils.VideoClient;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户(User)表服务实现类
@@ -20,8 +31,19 @@ import java.util.List;
  */
 @Service("userService")
 public class UserServiceImpl implements UserService {
+
     @Resource
     private UserDao userDao;
+
+    @Autowired
+    private VideoClient videoClient;
+
+    @Value("${user.filepath.video}")
+    private String videoPath;
+
+
+    @Value("${user.filepath.cover}")
+    private String coverPath;
 
     /**
      * 通过ID查询单条数据
@@ -131,5 +153,42 @@ public class UserServiceImpl implements UserService {
     @Override
     public int queryPlayedCount(Integer id) {
         return userDao.queryPlayedCount(id);
+    }
+
+    @Override
+    public List<CommentVO> queryComments(Integer video_id,Integer page,Integer pageSize) {
+        int start=(page-1)*pageSize;
+        return userDao.queryComments(video_id,start,pageSize);
+    }
+
+    @Override
+    public int queryCommentsCount(Integer video_id) {
+
+        return userDao.queryCommentsCount(video_id);
+
+    }
+
+    @Override
+    public void insertComments(Comment comment) {
+
+        userDao.insertComments(comment);
+
+    }
+
+    @Override
+    public Map<String,String> uploadVideo(MultipartFile file, String filename) throws IOException, InterruptedException {
+        File fileio = new File(videoPath+filename);
+        file.transferTo(fileio);
+        String basename= FilenameUtils.getBaseName(filename);
+
+        String videoUrl="http://localhost:8071/api/"+filename;
+        String coverUrl="http://localhost:8071/api/"+basename+".jpg";
+
+        videoClient.fetchframe(videoUrl,coverPath+basename+".jpg");
+
+        Map<String,String> result=new HashMap<>();
+        result.put("videoUrl",videoUrl);
+        result.put("coverUrl",coverUrl);
+        return result;
     }
 }

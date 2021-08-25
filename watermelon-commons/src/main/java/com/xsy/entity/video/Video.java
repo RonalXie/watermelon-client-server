@@ -38,9 +38,9 @@ public class Video implements Serializable {
      */
     private Integer categoryId;
 
-    private Date createdAt;
+    private String createdAt;
 
-    private Date updatedAt;
+    private String updatedAt;
 
 
     public Integer getId() {
@@ -99,20 +99,34 @@ public class Video implements Serializable {
         this.categoryId = categoryId;
     }
 
-    public Date getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public String getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
     }
 
+    @Override
+    public String toString() {
+        return "Video{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", intro='" + intro + '\'' +
+                ", uid=" + uid +
+                ", cover='" + cover + '\'' +
+                ", link='" + link + '\'' +
+                ", categoryId=" + categoryId +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

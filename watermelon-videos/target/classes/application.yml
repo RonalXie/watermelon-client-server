@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: USER-VIDEOS
+    name: USER-VIDEO
   cloud:
     nacos:
       server-addr: 106.15.43.178:8848
@@ -19,8 +19,14 @@ spring:
     host: 106.15.43.178
     port: 6379
 
+  mvc:
+    async:
+      request-timeout: 20000
+
 
 
 mybatis:
   mapper-locations: classpath:mapping/*.xml
   type-aliases-package: com.xsy.entity
+
+

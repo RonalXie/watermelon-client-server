@@ -1,8 +1,9 @@
 package com.xsy.dao;
-
 import com.xsy.entity.user.Favorite;
 import com.xsy.entity.user.Played;
 import com.xsy.entity.user.User;
+import com.xsy.entity.video.Comment;
+import com.xsy.entity.video.CommentVO;
 import com.xsy.entity.video.VideoVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -99,6 +100,11 @@ public interface UserDao {
     int queryFavoriteCount(Integer id);
     int queryPlayedCount(Integer id);
 
+    List<CommentVO> queryComments(Integer video_id,Integer start,Integer pageSize);
 
+    int queryCommentsCount(Integer video_id);
+
+
+    void insertComments(Comment comment);
 }
 

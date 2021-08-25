@@ -2,9 +2,14 @@ package com.xsy.service;
 
 import com.xsy.entity.user.Favorite;
 import com.xsy.entity.user.User;
+import com.xsy.entity.video.Comment;
+import com.xsy.entity.video.CommentVO;
 import com.xsy.entity.video.VideoVO;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户(User)表服务接口
@@ -70,4 +75,11 @@ public interface UserService {
     int queryFavoriteCount(Integer id);
     int queryPlayedCount(Integer id);
 
+    List<CommentVO> queryComments(Integer video_id,Integer page,Integer pageSize);
+
+    int queryCommentsCount(Integer video_id);
+
+    void insertComments(Comment comment);
+
+    Map<String,String> uploadVideo(MultipartFile file, String filename) throws IOException, InterruptedException;
 }

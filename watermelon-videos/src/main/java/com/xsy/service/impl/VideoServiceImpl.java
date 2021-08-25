@@ -140,13 +140,15 @@ public class VideoServiceImpl implements VideoService {
         }
         User userLogin= (User) redisTemplate.opsForValue().get(RedisPrefix.TOKEN+token);
         //是否点赞
-        if (!ObjectUtils.isEmpty(token)){
+        if (!ObjectUtils.isEmpty(userLogin)){
 
             videoDetailVO.setLiked(redisTemplate.opsForSet().isMember(RedisPrefix.USER_LIKED_ID+userLogin.getId(),id));
         }
 
         //是否收藏
-        videoDetailVO.setFavorite(userClient.isFavorite(userLogin.getId(),id));
+
+        if (!ObjectUtils.isEmpty(userLogin))
+            videoDetailVO.setFavorite(userClient.isFavorite(userLogin.getId(),id));
         return videoDetailVO;
     }
 

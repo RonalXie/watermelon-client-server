@@ -10,8 +10,8 @@
         <result property="cover" column="cover" jdbcType="VARCHAR"/>
         <result property="link" column="link" jdbcType="VARCHAR"/>
         <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
-        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
-        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="createdAt" column="created_at" jdbcType="VARCHAR"/>
+        <result property="updatedAt" column="updated_at" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--插入历史记录-->
@@ -68,6 +68,7 @@
                v.cover,
                v.link,
                u.name       uploader,
+               u.avatar,
                v.created_at createdAt,
                c.name       category
         from video v

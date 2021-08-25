@@ -14,10 +14,33 @@ spring:
     url: jdbc:mysql://106.15.43.178:3306/watermelon?characterEncoding=UTF-8&useSSL=false
     username: root
     password: 123456
+
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 100MB
   redis:
     host: 106.15.43.178
     port: 6379
+  mvc:
+    async:
+      request-timeout: 20000
 
 mybatis:
   mapper-locations: classpath:mapping/*.xml
   type-aliases-package: com.xsy.entity
+
+
+#user:
+#  filepath:
+#    video: D:/watermelon/watermelon_video/
+#user.filepath.cover: D:/watermelon/watermelon_cover/
+#user.filepath.avatar: D:/watermelon/watermelon_avatar/
+
+
+
+user:
+  filepath:
+    video: D:/watermelon/watermelon_video/
+    cover: D:/watermelon/watermelon_cover/
+    avatar: D:/watermelon/watermelon_avatar/

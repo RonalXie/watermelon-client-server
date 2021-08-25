@@ -19,9 +19,9 @@ public class CommentVO implements Serializable {
     private Integer id;
     private String content;
     private Integer parentId;
-    private Date createdAt;
+    private String createdAt;
     private UserUp userUp;
-    private List<CommentVO> comments;
+    private List<CommentVO> children;
 
 
 
@@ -33,12 +33,12 @@ public class CommentVO implements Serializable {
         this.userUp = userUp;
     }
 
-    public List<CommentVO> getComments() {
-        return comments;
+    public List<CommentVO> getChildren() {
+        return children;
     }
 
-    public void setComments(List<CommentVO> comments) {
-        this.comments = comments;
+    public void setChildren(List<CommentVO> children) {
+        this.children = children;
     }
 
     public Integer getId() {
@@ -65,11 +65,11 @@ public class CommentVO implements Serializable {
         this.parentId = parentId;
     }
 
-    public Date getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 

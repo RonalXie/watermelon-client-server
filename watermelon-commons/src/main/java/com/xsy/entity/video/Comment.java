@@ -30,7 +30,7 @@ public class Comment implements Serializable {
      */
     private Integer parentId;
 
-    private Date createdAt;
+    private String createdAt;
 
 
 
@@ -75,14 +75,23 @@ public class Comment implements Serializable {
         this.parentId = parentId;
     }
 
-    public Date getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", uid=" + uid +
+                ", videoId=" + videoId +
+                ", content='" + content + '\'' +
+                ", parentId=" + parentId +
+                ", createdAt='" + createdAt + '\'' +
+                '}';
+    }
 }

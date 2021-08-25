@@ -12,63 +12,174 @@
         <result property="openid" column="openid" jdbcType="VARCHAR"/>
         <result property="wechatLinked" column="wechat_linked" jdbcType="INTEGER"/>
         <result property="followingCount" column="following_count" jdbcType="INTEGER"/>
-        <result property="followersCount" column="followers_count" jdbcType="INTEGER"/>
+        <result property="followersCount" column="followers_count" jdbcType="TIMESTAMP"/>
         <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
         <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-<!--    获取收藏列表-->
+    <!--
+
+        private Integer id;
+        private String content;
+        private Integer parentId;
+        private Date createdAt;
+        private UserUp userUp;
+        private List<CommentVO> comments;-->
+
+    <resultMap id="commentMap" type="com.xsy.entity.video.CommentVO">
+        <id property="id" column="id" javaType="INTEGER"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <association property="userUp" javaType="com.xsy.entity.user.UserUp">
+            <result property="id" column="uid"/>
+            <result property="name" column="name"/>
+            <result property="avatar" column="avatar"/>
+        </association>
+        <collection property="children" javaType="List" ofType="com.xsy.entity.video.CommentVO">
+            <id property="id" column="cid" javaType="INTEGER"/>
+            <result property="content" column="ccontent" jdbcType="VARCHAR"/>
+            <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+            <result property="createdAt" column="ccreated_at" jdbcType="TIMESTAMP"/>
+            <association property="userUp" javaType="com.xsy.entity.user.UserUp">
+                <result property="id" column="cuid"/>
+                <result property="name" column="cname"/>
+                <result property="avatar" column="cavatar"/>
+            </association>
+        </collection>
+
+    </resultMap>
+
+    <!--插入评论-->
+
+    <insert id="insertComments" parameterType="com.xsy.entity.video.Comment">
+        insert into comment(uid,video_id,content,parent_id,created_at) values (#{uid},#{videoId},#{content},#{parentId},#{createdAt})
+    </insert>
+
+
+    <!--获取评论-->
+    <select id="queryComments" resultMap="commentMap">
+        SELECT p.id,
+               p.content       content,
+               p.created_at as created_at,
+               u.id            uid,
+               u.name          `name`,
+               u.avatar        avatar,
+               c.id            cid,
+               c.content       ccontent,
+               c.parent_id,
+               c.created_at    ccreated_at,
+               cu.id           cuid,
+               cu.name         cname,
+               cu.avatar       cavatar
+        from comment p
+                 LEFT JOIN video v ON p.video_id = v.id
+                 LEFT JOIN user u ON p.uid = u.id
+                 LEFT JOIN `comment` c ON p.id = c.parent_id
+                 left join user cu on cu.id = c.uid
+        WHERE v.id = #{video_id}
+          and p.parent_id is NULL limit #{start}
+            , #{pageSize}
+
+    </select>
+
+    <!--    获取评论总数-->
+    <select id="queryCommentsCount" resultType="int">
+
+        SELECT COUNT(*)
+        from comment p
+                 LEFT JOIN video v ON p.video_id = v.id
+                 LEFT JOIN user u ON p.uid = u.id
+                 LEFT JOIN `comment` c ON p.id = c.parent_id
+                 left join user cu on cu.id = c.uid
+        WHERE v.id = #{video_id}
+    </select>
+
+
+    <!--    获取收藏列表总数-->
+    <select id="queryFavoriteCount" parameterType="int" resultType="int">
+
+        select COUNT(*)
+        from favorite f
+                 left join user u on f.uid = u.id
+                 left join video v on f.video_id = v.id
+                 left join category c on v.category_id = c.id
+        where f.uid = #{id}
+
+    </select>
+
+    <!--    获取收藏列表-->
     <select id="queryPageFavorite" parameterType="int" resultType="com.xsy.entity.video.VideoVO">
 
         select v.id,
-               u.name uploader,
+               u.name       uploader,
                v.title,
                v.cover,
-               c.name category,
+               c.name       category,
                f.created_at createdAt
-        from favorite f left join user u on f.uid=u.id
-                      left join video v on f.video_id=v.id
-                      left join category c on v.category_id=c.id
-        where f.uid=#{id} limit #{start},#{pageSize}
+        from favorite f
+                 left join user u on f.uid = u.id
+                 left join video v on f.video_id = v.id
+                 left join category c on v.category_id = c.id
+        where f.uid = #{id} limit #{start}
+            , #{pageSize}
 
     </select>
 
     <!--分页获取播放历史-->
     <select id="queryPagePlayed" parameterType="int" resultType="com.xsy.entity.video.VideoVO">
         select v.id,
-               u.name uploader,
+               u.name       uploader,
                v.title,
                v.cover,
-               c.name category,
+               c.name       category,
                p.created_at createdAt
-        from played p left join user u on p.uid=u.id
-        left join video v on p.video_id=v.id
-        left join category c on v.category_id=c.id
-        where p.uid=#{id} limit #{start},#{pageSize}
+        from played p
+                 left join user u on p.uid = u.id
+                 left join video v on p.video_id = v.id
+                 left join category c on v.category_id = c.id
+        where p.uid = #{id} limit #{start}
+            , #{pageSize}
     </select>
 
-
+    <select id="queryPlayedCount" parameterType="int" resultType="int">
+        select COUNT(*)
+        from played p
+                 left join user u on p.uid = u.id
+                 left join video v on p.video_id = v.id
+                 left join category c on v.category_id = c.id
+        where p.uid = #{id}
+    </select>
 
 
     <!--添加收藏-->
     <insert id="insertFavorite" parameterType="com.xsy.entity.user.Favorite">
 
-        insert into favorite(uid,video_id,created_at) values (#{uid},#{videoId},#{createdAt})
+        insert into favorite(uid, video_id, created_at)
+        values (#{uid}, #{videoId}, #{createdAt})
 
     </insert>
 
     <delete id="deleteFavorite" parameterType="int">
-        delete from favorite where uid=#{id} and video_id=#{video_id}
+        delete
+        from favorite
+        where uid = #{id}
+          and video_id = #{video_id}
     </delete>
 
     <select id="queryFavorite" parameterType="int" resultType="com.xsy.entity.user.Favorite">
-        select uid,video_id videoId,created_at createdAt from favorite where uid=#{uid} and video_id=#{video_id}
+        select uid, video_id videoId, created_at createdAt
+        from favorite
+        where uid = #{uid}
+          and video_id = #{video_id}
     </select>
 
 
     <!--根据手机号查询信息-->
     <select id="queryByPhone" resultMap="UserMap">
-        select  * from user where phone=#{phone}
+        select *
+        from user
+        where phone = #{phone}
     </select>
 
     <!--查询单个-->
